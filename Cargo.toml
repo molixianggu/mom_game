@@ -4,14 +4,18 @@ version = "0.1.0"
 edition = "2021"
 
 [workspace]
-members = [
-    "launchers/wasm",
-    "launchers/native",
-]
+members = ["launchers/wasm", "launchers/native", "shared_space"]
+
+[lib]
+path = "client/lib.rs"
 
 [[bin]]
-name="native-launcher"
-path="launchers/native/src/main.rs"
+name = "native-launcher"
+path = "launchers/native/src/main.rs"
+
+[[bin]]
+name = "server"
+path = "server/main.rs"
 
 # Optimizations for WASM
 [profile.release]
@@ -20,7 +24,58 @@ codegen-units = 1
 opt-level = 'z'
 lto = true
 
+[features]
+default = [
+    "bevy/bevy_winit",
+    "bevy/render",
+    "bevy/png",
+    "bevy/jpeg",
+    "bevy/animation",
+    "bevy/vorbis",
+    "bevy/bevy_gilrs",
+    "bevy/bevy_asset",
+    "bevy/bevy_audio",
+    "bevy/bevy_scene",
+    "bevy/x11",
+    "bevy/filesystem_watcher",
+]
+
+dev = ["bevy/dynamic"]
+
 [dependencies]
-bevy = "0.8.0"
-image = "0.24.3"
-winit = "0.26.1"
+
+# 共享库
+shared_space = { path = "shared_space" }
+
+
+rand = { version = "^0.8.5" }
+regex = { version = "^1.6.0" }
+lazy_static = { version = "^1.4.0" }
+
+# 序列化
+serde = { version = "^1.0.143", features = ["derive"] }
+serde_json = { version = "1.0.83" }
+ron = { version = "^0.7" }
+
+bevy = { version = "^0.8.0", default-features = false }
+image = { version = "0.24.3" }
+winit = { version = "0.26.1" }
+
+# bevy 插件
+# 资源载入
+bevy_asset_loader = { version = "0.12.0", features = ["2d"] }
+# 物理引擎
+bevy_rapier2d = { version = "^0.16.0", features = [
+    "serde-serialize",
+    "enhanced-determinism",
+    "debug-render",
+] }
+# 打包资源
+bevy_embedded_assets = { version = "^0.4.0" }
+# 调试
+bevy-inspector-egui = { version = "^0.12.1" }
+
+# 网络模块 // "use-webrtc"
+naia-bevy-client = { version = "0.10.2" }
+naia-bevy-server = { version = "0.10.2", features = ["use-udp"] }
+naia-shared = { version = "0.10.2" }

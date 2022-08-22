@@ -1,0 +1,13 @@
+[package]
+name = "shared_space"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "shared_space"
+bench = false
+
+[dependencies]
+
+bevy_ecs = { version = "0.8", default-features=false}
+naia-shared = { version = "0.10.2" }
